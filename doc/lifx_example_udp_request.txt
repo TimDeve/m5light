@@ -1,0 +1,15 @@
+size: 29 00
+protocol: 00 34
+source: 00 00 00 00
+target: 00 00 00 00 00 00 00 00
+reserved: 00 00 00 00 00 00
+no res no ack: 00
+sequence number: 00
+protocol reserved: 00 00 00 00 00 00 00 00
+message type (set power): 75 00
+reserved: 00 00
+
+power level: 00 00
+duration: 00 04 00 00
+
+28 00 00 34 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 75 00 00 00 00 00 00 04 00 00
