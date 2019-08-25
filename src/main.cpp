@@ -3,6 +3,7 @@
 #include <WiFiUdp.h>
 #include <Ticker.h>
 #include <secrets.h>
+#include <lifxmessage.h>
 
 const char *networkName = NETWORK_NAME;
 const char *networkPswd = NETWORK_PASS;
@@ -18,14 +19,14 @@ uint tickSinceScreenWakeUp = 0;
 WiFiUDP udp;
 Ticker screenTicker;
 
-const unsigned char turnOnMessage[] = {0x28, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x75, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x01, 0x00, 0x00};
-const unsigned char turnOffMessage[] = {0x28, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x75, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00};
-
 void wifiEventHandler(WiFiEvent_t event);
 void connectToWiFi(const char *ssid, const char *pwd);
 void screenTimeout();
 void turnScreenOff();
 void turnScreenOn();
+SetPowerMessage createTurnOffMessage();
+SetPowerMessage createTurnOnMessage();
+void printHexToSerial(uint8_t *arr, uint8_t size);
 
 void setup()
 {
@@ -49,8 +50,12 @@ void loop()
 
     if (isWifiConnected)
     {
+      SetPowerMessage m = createTurnOnMessage();
+      uint8_t *byteMessage = reinterpret_cast<uint8_t *>(&m);
+      printHexToSerial(byteMessage, m.header.size);
+
       udp.beginPacket(udpAddress, udpPort);
-      udp.write(turnOnMessage, sizeof(turnOnMessage));
+      udp.write(byteMessage, m.header.size);
       udp.endPacket();
     }
     else
@@ -64,8 +69,12 @@ void loop()
 
     if (isWifiConnected)
     {
+      SetPowerMessage m = createTurnOffMessage();
+      uint8_t *byteMessage = reinterpret_cast<uint8_t *>(&m);
+      printHexToSerial(byteMessage, m.header.size);
+
       udp.beginPacket(udpAddress, udpPort);
-      udp.write(turnOffMessage, sizeof(turnOffMessage));
+      udp.write(byteMessage, m.header.size);
       udp.endPacket();
     }
     else
@@ -147,4 +156,51 @@ void turnScreenOn()
 
     M5.Lcd.setBrightness(200);
   }
+}
+
+SetPowerMessage createSetPowerMessage()
+{
+  Header h = {0};
+  h.protocol = 1024U;
+  h.tagged = 1U;
+  h.addressable = 1U;
+  h.type = 117U;
+
+  SetPowerPayload p = {0};
+  p.duration = 256U;
+
+  SetPowerMessage m = {
+      .header = h,
+      .payload = p,
+  };
+
+  m.header.size = sizeof(m);
+
+  return m;
+}
+
+SetPowerMessage createTurnOffMessage()
+{
+  SetPowerMessage m = createSetPowerMessage();
+  m.payload.level = 0x0000;
+  return m;
+}
+
+SetPowerMessage createTurnOnMessage()
+{
+  SetPowerMessage m = createSetPowerMessage();
+  m.payload.level = 0xFFFF;
+  return m;
+}
+
+void printHexToSerial(uint8_t *arr, uint8_t size)
+{
+  for (int i = 0; i < size; i++)
+  {
+    if (i > 0)
+      Serial.printf(":");
+
+    Serial.printf("%02X", arr[i]);
+  }
+  Serial.printf("\n");
 }
