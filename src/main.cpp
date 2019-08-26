@@ -51,8 +51,8 @@ void loop()
 
     if (isWifiConnected)
     {
-      SetPowerMessage m = createTurnOnMessage();
-      uint8_t *byteMessage = reinterpret_cast<uint8_t *>(&m);
+      auto m = createTurnOnMessage();
+      auto *byteMessage = reinterpret_cast<uint8_t *>(&m);
       printHexToSerial(byteMessage, m.header.size);
 
       udp.beginPacket(udpAddress, udpPort);
@@ -70,8 +70,8 @@ void loop()
 
     if (isWifiConnected)
     {
-      SetPowerMessage m = createTurnOffMessage();
-      uint8_t *byteMessage = reinterpret_cast<uint8_t *>(&m);
+      auto m = createTurnOffMessage();
+      auto *byteMessage = reinterpret_cast<uint8_t *>(&m);
       printHexToSerial(byteMessage, m.header.size);
 
       udp.beginPacket(udpAddress, udpPort);
@@ -89,8 +89,8 @@ void loop()
 
     if (isWifiConnected)
     {
-      SetColorMessage m = createSetColorMessage();
-      uint8_t *byteMessage = reinterpret_cast<uint8_t *>(&m);
+      auto m = createSetColorMessage();
+      auto *byteMessage = reinterpret_cast<uint8_t *>(&m);
       printHexToSerial(byteMessage, m.header.size);
 
       udp.beginPacket(udpAddress, udpPort);
@@ -191,7 +191,7 @@ Header createHeader(uint16_t type)
 
 SetPowerMessage createSetPowerMessage()
 {
-  Header h = createHeader(117U);
+  auto h = createHeader(117U);
 
   SetPowerPayload p = {0};
   p.duration = 256U;
@@ -222,7 +222,7 @@ SetPowerMessage createTurnOnMessage()
 
 SetColorMessage createSetColorMessage()
 {
-  Header h = createHeader(102U);
+  auto h = createHeader(102U);
 
   HSBK color = {
       .hue = 0U,
