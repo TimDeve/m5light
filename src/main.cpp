@@ -27,6 +27,7 @@ void turnScreenOn();
 SetPowerMessage createTurnOffMessage();
 SetPowerMessage createTurnOnMessage();
 void printHexToSerial(uint8_t *arr, uint8_t size);
+SetColorMessage createSetColorMessage();
 
 void setup()
 {
@@ -70,6 +71,25 @@ void loop()
     if (isWifiConnected)
     {
       SetPowerMessage m = createTurnOffMessage();
+      uint8_t *byteMessage = reinterpret_cast<uint8_t *>(&m);
+      printHexToSerial(byteMessage, m.header.size);
+
+      udp.beginPacket(udpAddress, udpPort);
+      udp.write(byteMessage, m.header.size);
+      udp.endPacket();
+    }
+    else
+    {
+      M5.Lcd.println(" Wait...");
+    }
+  }
+  else if (M5.BtnC.wasReleased())
+  {
+    turnScreenOn();
+
+    if (isWifiConnected)
+    {
+      SetColorMessage m = createSetColorMessage();
       uint8_t *byteMessage = reinterpret_cast<uint8_t *>(&m);
       printHexToSerial(byteMessage, m.header.size);
 
@@ -158,13 +178,20 @@ void turnScreenOn()
   }
 }
 
-SetPowerMessage createSetPowerMessage()
+Header createHeader(uint16_t type)
 {
   Header h = {0};
   h.protocol = 1024U;
   h.tagged = 1U;
   h.addressable = 1U;
-  h.type = 117U;
+  h.type = type;
+
+  return h;
+}
+
+SetPowerMessage createSetPowerMessage()
+{
+  Header h = createHeader(117U);
 
   SetPowerPayload p = {0};
   p.duration = 256U;
@@ -190,6 +217,31 @@ SetPowerMessage createTurnOnMessage()
 {
   SetPowerMessage m = createSetPowerMessage();
   m.payload.level = 0xFFFF;
+  return m;
+}
+
+SetColorMessage createSetColorMessage()
+{
+  Header h = createHeader(102U);
+
+  HSBK color = {
+      .hue = 0U,
+      .saturation = 0U,
+      .brightness = 0xFFFF,
+      .kelvin = 0xFFFF,
+  };
+
+  SetColorPayload p = {0};
+  p.duration = 256U;
+  p.color = color;
+
+  SetColorMessage m = {
+      .header = h,
+      .payload = p,
+  };
+
+  m.header.size = sizeof(m);
+
   return m;
 }
 

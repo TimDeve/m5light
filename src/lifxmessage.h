@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 #pragma pack(push, 1)
-typedef struct
+typedef struct Header
 {
   /* frame */
   uint16_t size;
@@ -26,7 +26,17 @@ typedef struct
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-typedef struct
+typedef struct HSBK
+{
+  uint16_t hue;
+  uint16_t saturation;
+  uint16_t brightness;
+  uint16_t kelvin;
+} HSBK;
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+typedef struct SetPowerPayload
 {
   uint16_t level;
   uint32_t duration;
@@ -34,9 +44,26 @@ typedef struct
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-typedef struct
+typedef struct SetPowerMessage
 {
   Header header;
   SetPowerPayload payload;
 } SetPowerMessage;
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+typedef struct SetColorPayload
+{
+  uint8_t : 8;
+  HSBK color;
+  uint32_t duration;
+} SetColorPayload;
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+typedef struct SetColorMessage
+{
+  Header header;
+  SetColorPayload payload;
+} SetColorMessage;
 #pragma pack(pop)
