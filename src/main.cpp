@@ -228,7 +228,7 @@ SetColorMessage createSetColorMessage()
       .hue = 0U,
       .saturation = 0U,
       .brightness = 0xFFFF,
-      .kelvin = 0xFFFF,
+      .kelvin = 2700U,
   };
 
   SetColorPayload p = {0};
