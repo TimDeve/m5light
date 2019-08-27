@@ -3,7 +3,7 @@
 #include <WiFiUdp.h>
 
 #include "lifx.h"
-#include "lifxmessage.h"
+#include "lifxscenes.h"
 
 const char *udpAddress = "10.0.0.255";
 const int udpPort = 56700;
@@ -69,15 +69,15 @@ SetPowerMessage createTurnOnMessage()
   return m;
 }
 
-SetColorMessage createSetColorMessage()
+SetColorMessage createSetColorMessage(uint16_t brightness, uint16_t kelvin)
 {
   auto h = createHeader(102U);
 
   HSBK color = {
       .hue = 0U,
       .saturation = 0U,
-      .brightness = 0xFFFF,
-      .kelvin = 2700U,
+      .brightness = brightness,
+      .kelvin = kelvin,
   };
 
   SetColorPayload p = {0};
@@ -118,7 +118,7 @@ void sendTurnOffMessage()
 
 void sendSetColorMessage()
 {
-  auto m = createSetColorMessage();
+  auto m = lifxscenes::chill.message;
   auto *byteMessage = reinterpret_cast<uint8_t *>(&m);
   printHexToSerial(byteMessage, m.header.size);
 
