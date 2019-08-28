@@ -1,86 +1,36 @@
 #include <M5Stack.h>
 #include <WiFi.h>
-#include <Ticker.h>
 
 #include "secrets.h"
 #include "lifx.h"
+#include "ui.h"
 
 const char *networkName = NETWORK_NAME;
 const char *networkPswd = NETWORK_PASS;
 
 boolean isWifiConnected = false;
-boolean screenOn = true;
-boolean tickerAttached = false;
-uint tickSinceScreenWakeUp = 0;
-
-Ticker screenTicker;
 
 void wifiEventHandler(WiFiEvent_t event);
 void connectToWiFi(const char *ssid, const char *pwd);
-void screenTimeout();
-void turnScreenOff();
-void turnScreenOn();
 
 void setup()
 {
   // Init lcd, serial, but not the sd card
   M5.begin(true, false, true);
 
-  M5.Lcd.clear(TFT_BLACK);
-  M5.Lcd.setTextColor(TFT_WHITE);
-  M5.Lcd.setTextSize(2);
-
   connectToWiFi(networkName, networkPswd);
+
+  uiSetup();
 }
 
 void loop()
 {
-  M5.update();
-
-  if (M5.BtnA.wasReleased())
-  {
-    turnScreenOn();
-
-    if (isWifiConnected)
-    {
-      sendTurnOnMessage();
-    }
-    else
-    {
-      M5.Lcd.println(" Wait...");
-    }
-  }
-  else if (M5.BtnB.wasReleased())
-  {
-    turnScreenOn();
-
-    if (isWifiConnected)
-    {
-      sendTurnOffMessage();
-    }
-    else
-    {
-      M5.Lcd.println(" Wait...");
-    }
-  }
-  else if (M5.BtnC.wasReleased())
-  {
-    turnScreenOn();
-
-    if (isWifiConnected)
-    {
-      sendSetColorMessage();
-    }
-    else
-    {
-      M5.Lcd.println(" Wait...");
-    }
-  }
+  uiLoop();
 }
 
 void connectToWiFi(const char *ssid, const char *pwd)
 {
-  M5.Lcd.print("\n Connecting to ");
+  M5.Lcd.print("Connecting to ");
   M5.Lcd.println(String(ssid) + "\n");
 
   // Delete old config
@@ -90,7 +40,7 @@ void connectToWiFi(const char *ssid, const char *pwd)
 
   WiFi.begin(ssid, pwd);
 
-  M5.Lcd.println(" Waiting for connection...\n");
+  M5.Lcd.println("Waiting for connection...");
 }
 
 void wifiEventHandler(WiFiEvent_t event)
@@ -102,11 +52,7 @@ void wifiEventHandler(WiFiEvent_t event)
 
     setupUdp();
 
-    if (!tickerAttached)
-    {
-      screenTicker.attach(1, screenTimeout);
-      tickerAttached = true;
-    }
+    uiInit();
 
     isWifiConnected = true;
     break;
@@ -118,36 +64,5 @@ void wifiEventHandler(WiFiEvent_t event)
   default:
     // Other events; Do nothing
     break;
-  }
-}
-
-void screenTimeout()
-{
-  if (tickSinceScreenWakeUp > 3 && screenOn)
-  {
-    turnScreenOff();
-  }
-  else if (screenOn)
-  {
-    tickSinceScreenWakeUp += 1;
-  }
-}
-
-void turnScreenOff()
-{
-  screenOn = false;
-
-  M5.Lcd.setBrightness(0);
-}
-
-void turnScreenOn()
-{
-  tickSinceScreenWakeUp = 0;
-
-  if (screenOn == false)
-  {
-    screenOn = true;
-
-    M5.Lcd.setBrightness(200);
   }
 }

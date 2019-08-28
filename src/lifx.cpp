@@ -3,7 +3,6 @@
 #include <WiFiUdp.h>
 
 #include "lifx.h"
-#include "lifxscenes.h"
 
 const char *udpAddress = "10.0.0.255";
 const int udpPort = 56700;
@@ -116,13 +115,13 @@ void sendTurnOffMessage()
   udp.endPacket();
 }
 
-void sendSetColorMessage()
+void sendSetColorMessage(uint16_t brightness, uint16_t kelvin)
 {
-  auto m = lifxscenes::chill.message;
-  auto *byteMessage = reinterpret_cast<uint8_t *>(&m);
-  printHexToSerial(byteMessage, m.header.size);
+  auto message = createSetColorMessage(brightness, kelvin);
+  auto *byteMessage = reinterpret_cast<uint8_t *>(&message);
+  printHexToSerial(byteMessage, message.header.size);
 
   udp.beginPacket(udpAddress, udpPort);
-  udp.write(byteMessage, m.header.size);
+  udp.write(byteMessage, message.header.size);
   udp.endPacket();
 }
