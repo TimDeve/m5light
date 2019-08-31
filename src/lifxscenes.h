@@ -44,4 +44,6 @@ const scene_t reading = {
 
 const scene_t scenes[] = {chill, daylight, warmBright, computer, reading};
 
+const size_t sizeofScenes = sizeof(lifxscenes::scenes) / sizeof(lifxscenes::scene_t);
+
 } // namespace lifxscenes

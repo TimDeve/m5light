@@ -43,20 +43,32 @@ void screenTimeout()
   }
 }
 
+void drawSceneSelector(int32_t yPosition)
+{
+  M5.Lcd.fillRect(40, yPosition + 38, 240, 2, TFT_DARKGREY);
+  M5.Lcd.fillTriangle(15, yPosition + 15, 30, yPosition + 7, 30, yPosition + 23, TFT_DARKGREY);
+  M5.Lcd.fillTriangle(305, yPosition + 15, 290, yPosition + 7, 290, yPosition + 23, TFT_DARKGREY);
+  M5.Lcd.setTextColor(TFT_DARKGREY);
+  M5.Lcd.drawCentreString(lifxscenes::scenes[currentlySelectedScene].name, 160, yPosition, 2);
+}
+
+void drawBottomMenu(int32_t yPosition)
+{
+  M5.Lcd.setTextColor(TFT_DARKGREY);
+  M5.Lcd.drawCentreString("On", 65, yPosition, 2);
+  M5.Lcd.drawCentreString("Off", 160, yPosition, 2);
+  M5.Lcd.drawCentreString("Switch", 255, yPosition, 2);
+}
+
 void render()
 {
   M5.Lcd.clear(TFT_WHITE);
 
-  M5.Lcd.fillRect(40, 98, 240, 2, TFT_DARKGREY);
-  M5.Lcd.fillTriangle(15, 75, 30, 67, 30, 83, TFT_DARKGREY);
-  M5.Lcd.fillTriangle(305, 75, 290, 67, 290, 83, TFT_DARKGREY);
-  M5.Lcd.setTextColor(TFT_DARKGREY);
-  M5.Lcd.drawCentreString(lifxscenes::scenes[currentlySelectedScene].name, 160, 60, 2);
+  int32_t sceneSelectorYPosition = 120;
+  drawSceneSelector(sceneSelectorYPosition);
 
-  M5.Lcd.setTextColor(TFT_DARKGREY);
-  M5.Lcd.drawCentreString("On", 65, 200, 2);
-  M5.Lcd.drawCentreString("Off", 160, 200, 2);
-  M5.Lcd.drawCentreString("Switch", 255, 200, 2);
+  int32_t bottomMenuYPosition = 200;
+  drawBottomMenu(bottomMenuYPosition);
 
   shouldRerender = false;
 }
@@ -83,7 +95,7 @@ void uiLoop()
     {
       turnScreenOn();
 
-      if (currentlySelectedScene == sizeof(lifxscenes::scenes) / sizeof(lifxscenes::scene_t) - 1)
+      if (currentlySelectedScene == lifxscenes::sizeofScenes - 1)
       {
         currentlySelectedScene = 0;
       }
@@ -124,6 +136,9 @@ void uiInit()
 
 void uiSetup()
 {
+  // Init lcd, serial, but not the sd card
+  M5.begin(true, false, true);
+
   M5.Lcd.clear(TFT_WHITE);
   M5.Lcd.setTextColor(TFT_DARKGREY);
   M5.Lcd.setTextSize(2);

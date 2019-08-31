@@ -10,9 +10,6 @@ const char *networkPswd = NETWORK_PASS;
 
 void setup()
 {
-  // Init lcd, serial, but not the sd card
-  M5.begin(true, false, true);
-
   uiSetup();
 
   connectToWiFi(networkName, networkPswd);
