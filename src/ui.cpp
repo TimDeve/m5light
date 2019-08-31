@@ -5,8 +5,8 @@
 #include "lifxscenes.h"
 
 #define COLOR_BACKGROUND 0x18E3 // Dark grey
-#define COLOR_FOREGROUND TFT_WHITE
-#define COLOR_ACTIVE 0xF52A // Dark orange
+#define COLOR_FOREGROUND 0xAD75 // Light grey
+#define COLOR_ACTIVE 0xF52A     // Dark orange
 
 #define LCD_BRIGHTNESS 50
 
@@ -128,7 +128,7 @@ void drawSceneSelector(int32_t yPosition)
   M5.Lcd.fillRect(40, yPosition + 38, 240, 2, foregroundColor);
   M5.Lcd.fillTriangle(15, yPosition + 15, 30, yPosition + 7, 30, yPosition + 23, foregroundColor);
   M5.Lcd.fillTriangle(305, yPosition + 15, 290, yPosition + 7, 290, yPosition + 23, foregroundColor);
-  M5.Lcd.setTextColor(COLOR_FOREGROUND);
+  M5.Lcd.setTextColor(foregroundColor);
   M5.Lcd.drawCentreString(lifxscenes::scenes[currentlySelectedScene].name, 160, yPosition, 2);
 }
 
