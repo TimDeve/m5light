@@ -1,4 +1,10 @@
+#ifdef TARGET_STACK
 #include <M5Stack.h>
+#endif
+#ifdef TARGET_STICK
+#include <M5StickC.h>
+#endif
+
 #include <WiFi.h>
 
 #include "lifx.h"

@@ -1,5 +1,3 @@
-#include <M5Stack.h>
-
 #include "secrets.h"
 #include "lifx.h"
 #include "ui.h"
