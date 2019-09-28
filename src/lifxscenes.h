@@ -42,7 +42,19 @@ const scene_t reading = {
     .kelvin = 2000U,
 };
 
-const scene_t scenes[] = {chill, daylight, warmBright, computer, reading};
+const scene_t dark = {
+    .name = "Dark",
+    .brightness = 0x2222,
+    .kelvin = 2500U,
+};
+
+const scene_t darkRed = {
+    .name = "Dark Red",
+    .brightness = 0x2222,
+    .kelvin = 1500U,
+};
+
+const scene_t scenes[] = {chill, daylight, warmBright, computer, reading, dark, darkRed};
 
 const size_t lengthOfScenes = sizeof(lifxscenes::scenes) / sizeof(lifxscenes::scene_t);
 
