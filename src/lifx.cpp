@@ -2,8 +2,9 @@
 #include <WiFiUdp.h>
 
 #include "lifx.h"
+#include "secrets.h"
 
-const char *udpAddress = "10.0.0.255";
+const char *udpAddress = BROADCAST_ADDR;
 const int udpPort = 56700;
 
 WiFiUDP udp;
