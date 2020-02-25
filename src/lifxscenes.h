@@ -44,13 +44,13 @@ const scene_t reading = {
 
 const scene_t dark = {
     .name = "Dark",
-    .brightness = 0x2222,
+    .brightness = 0x0001,
     .kelvin = 2500U,
 };
 
 const scene_t darkRed = {
     .name = "Dark Red",
-    .brightness = 0x2222,
+    .brightness = 0x0001,
     .kelvin = 1500U,
 };
 
