@@ -5,6 +5,7 @@
 #define COLOR_BACKGROUND 0x0000 // Black but looks grey
 #define COLOR_FOREGROUND 0x2104 // Light grey
 
+boolean lightOn = false;
 boolean uiReady = false;
 boolean shouldRerender = true;
 size_t currentlySelectedScene = 0;
@@ -70,15 +71,21 @@ void uiLoop()
     }
     else if (M5.BtnA.wasReleasefor(300))
     {
+      lightOn = true;
       setCurrentlySelectedScene();
     }
     else if (M5.BtnB.wasReleased())
     {
-      sendTurnOnMessage();
-    }
-    else if (M5.BtnB.wasReleasefor(300))
-    {
-      sendTurnOffMessage();
+      if (lightOn)
+      {
+        lightOn = false;
+        sendTurnOffMessage();
+      }
+      else
+      {
+        lightOn = true;
+        sendTurnOnMessage();
+      }
     }
 
     if (shouldRerender)
