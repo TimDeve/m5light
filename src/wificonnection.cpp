@@ -13,31 +13,35 @@
 
 void connectToWiFi(const char *ssid, const char *pwd)
 {
-  M5.Lcd.print("Connecting to ");
-  M5.Lcd.println(String(ssid) + "\n");
+    #ifndef TARGET_ATOM
+    M5.Lcd.print("Connecting to ");
+    M5.Lcd.println(String(ssid) + "\n");
+    #endif
 
-  // Delete old config
-  WiFi.disconnect(true);
+    // Delete old config
+    WiFi.disconnect(true);
 
-  WiFi.onEvent(wifiEventHandler);
+    WiFi.onEvent(wifiEventHandler);
 
-  WiFi.begin(ssid, pwd);
+    WiFi.begin(ssid, pwd);
 
-  M5.Lcd.println("Waiting for connection...");
+    #ifndef TARGET_ATOM
+    M5.Lcd.println("Waiting for connection...");
+    #endif
 }
 
 void wifiEventHandler(WiFiEvent_t event)
 {
-  switch (event)
-  {
-  case SYSTEM_EVENT_STA_GOT_IP:
-    setupUdp();
+    switch (event)
+    {
+    case SYSTEM_EVENT_STA_GOT_IP:
+        setupUdp();
 
-    uiInit();
+        uiInit();
 
-    break;
-  default:
-    // Other events; Do nothing
-    break;
-  }
+        break;
+    default:
+        // Other events; Do nothing
+        break;
+    }
 }
