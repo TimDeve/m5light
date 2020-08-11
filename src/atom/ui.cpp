@@ -3,9 +3,8 @@
 
 #include "lifxscenes.h"
 
-#define GREEN CRGB::White
-#define RED CRGB::Green
-#define BLUE CRGB::Blue
+#define ORANGE 0xAAFF00
+#define RED 0x00FF00
 
 boolean screenOn = true;
 boolean tickerAttached = false;
@@ -36,7 +35,7 @@ void turnScreenOn()
     {
         screenOn = true;
 
-        M5.dis.setBrightness(10);
+        M5.dis.setBrightness(5);
     }
 }
 
@@ -61,7 +60,7 @@ void render()
     M5.dis.clear();
 
     if (uiReady) {
-        fillDisplay(GREEN);
+        fillDisplay(ORANGE);
     }
     else {
         fillDisplay(RED);
@@ -71,7 +70,7 @@ void render()
 void uiSetup()
 {
     M5.begin(true, false, true);
-    M5.dis.setBrightness(10);
+    M5.dis.setBrightness(5);
 }
 
 void uiInit()
