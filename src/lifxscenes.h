@@ -7,7 +7,7 @@ namespace lifxscenes
 
 typedef struct scene_t
 {
-    char *name;
+    const char *name;
     uint16_t brightness;
     uint16_t kelvin;
 } scene_t;
