@@ -26,13 +26,30 @@ void setupUdp()
   udp.begin(WiFi.localIP(), udpPort);
 }
 
+void setMacAddress(uint8_t target[8])
+{
+  uint8_t source[8] = BULB_MAC;
+  for (int i = 0; i < 8; i++)
+  {
+    if (i < 6)
+    {
+      target[i] = source[i];
+    }
+    else
+    {
+      target[i] = 0x00;
+    }
+  }
+}
+
 Header createHeader(uint16_t type)
 {
   Header h = {0};
   h.protocol = 1024U;
-  h.tagged = 1U;
+  h.tagged = 0U;
   h.addressable = 1U;
   h.type = type;
+  setMacAddress(h.target);
 
   return h;
 }
